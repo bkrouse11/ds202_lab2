@@ -1,15 +1,32 @@
 ---
-title: "individual1"
-author: Brandon Rouse
+title: "Individual Work"
+author: "Brandon Rouse"
+date: "2/15/2021"
 output: html_document
 ---
 
 ## Scratch Work
-
+```{r}
+choco <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/data/choco.csv") 
+str(choco) 
+```
 1. How are the ratings distributed? Create both a histogram and a boxplot and describe them. Don't forget to mention outliers, if there are any. 
+
+```{r}
+library(ggplot2)
+boxplot(choco$Rating)
+hist(choco$Rating)
+```
+
+Left-skewed data. 4 outliers on the lower side of the data. Not one 5.0 rating, also not rating between 3-3.33? Distribution is asymmetric and bimodal. 
 
 2. How does the number of ratings depend on the location of the company? Draw a bar chart of the number of reports. 
 
+```{r}
+library(ggplot2)
+loc <- c(choco$Location, choco$Rating)
+barplot(c)
+```
 3. Do ratings depend on the cacao percentage of a chocolate bar? Create both numerical and graphical summaries, and explain. [Hint: Think about why the scatterplot is not a very good choice for visualization here.]
 
 4. How do different bean origins compare in terms of the flavor of chocolates? Are beans from some places better than the other? Create both numerical and graphical summaries, and explain.
