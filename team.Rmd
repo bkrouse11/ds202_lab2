@@ -1,6 +1,7 @@
 ---
 title: "Lab 2, Team Analysis"
-author: Brandon Rouse, Sam Reinart
+author: "Brandon Rouse, Sam Reinart"
+date: "2/17/2021"
 output: html_document
 ---
 
@@ -8,3 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Searching for the Best Chocolates
+
+1. 
+2. 
+3. 
+4. 
+5. 
