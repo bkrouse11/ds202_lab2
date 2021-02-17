@@ -25,17 +25,17 @@ hist(ratings)
 boxplot(ratings)
 ```
 
-As you can see from the histogram, most of the chocolate bars have a rating between 2.75 and 3.75. From the boxplot shows that the median rating is around 3.25. There are a few outliers with low ratings on the boxplot. The histogram tells us that there are around 50 chocolate bars with ratings of 2 or less.
+As you can see from the histogram, most of the chocolate bars have a rating between 2.75 and 3.75. From the boxplot shows that the median rating is around 3.25. There are a few outliers with low ratings on the boxplot. The histogram tells us that there are around 50 chocolate bars with ratings of 2 or less. The distribution is left-skewed, bimodal, and asymmetric. There are also no data points with a perfect 5.0 rating.
 
 2. 
 ```{r}
 locationDF <- count(choco, Location)
 locationCount <- setNames(as.integer(locationDF$n), substr(locationDF$Location, 1, 13))
-barplot(locationCount, las=2, cex.names=0.8, ylim=c(0,1000))
-barplot(locationCount, las=2, cex.names=0.3, ylim=c(0,1000))
+barplot(locationCount, las=2, cex.names=0.8, ylim=c(0,1000), ylab = "Number of Ratings", main = "Number of Ratings per Country")
+barplot(locationCount, las=2, cex.names=0.3, ylim=c(0,1000), xlab = "Country", ylab = "Number of Ratings", main = "Number of Ratings per Country")
 ```
 
-A large majority of the ratings were made for companies located in the United States. This is likely due to the fact that there are a lot of chocolate companies based in the U.S. The next closest countries are France and Canada. The rest of the countries have very few ratings, likely because they have much fewer chocolate companies.
+A large majority of the ratings were made for companies located in the United States. This is likely due to the fact that there are a lot of chocolate companies based in the U.S. The next closest countries are France and Canada. The rest of the countries have very few ratings, likely because they have much fewer chocolate companies. This is most likely due to the fact of convenience. Chocolates from a location that are easier to obtain will increase the number of ratings for that location. 
 
 3. 
 ```{r}
@@ -44,17 +44,19 @@ plot(cocoaRatings)
 cocoaMeans <- aggregate(Rating ~ Cocoa_Percent, cocoaRatings, mean)
 cocoaMeansV <- setNames(cocoaMeans$Rating, cocoaMeans$Cocoa_Percent)
 barplot(cocoaMeansV, las=2)
-cor(cocoaMeans$Rating, cocoaMeans$Cocoa_Percent)
+cor(choco$Cocoa_Percent,choco$Rating)
 ```
 
-A scatter plot is not a good choice for visualization because it is difficult to see a pattern or trend on the graph. However, after taking the average score of each cocoa percentage and plotting it using a boxplot, we can see that there does not appear to be a direct relationship between the rating of chocolate and its cocoa percentage. We can confirm this by seeing the correlation between the two values. Since the correlation value is low, we can determine that the cocoa percentage does not have a large impact on the rating a chocolate bar receives.
+We can see that these two variables have a negative correlation with each other. This means that when one goes up, the other goes down. We can use this to imply that when cocoa percentage goes up, rating goes down. This correlation coefficient is relatively small though, with a value of only -0.151. This means that these two variables have a weak correlation strength.  
+Using a scatterplot for this problem is not a good choice for visualization here because the values for `rating` repeat themselves for all different percentages of cocoa. The graph shows no linear relationship and the points are straight lines horizontally with each other. This makes it very hard to see the relationship between the two variables. 
+However, after taking the average score of each cocoa percentage and plotting it using a bar plot, we can see that there does not appear to be a direct relationship between the rating of chocolate and its cocoa percentage. 
 
 4.
 ```{r}
 originRatings <- choco[c("Bean_Origin", "Rating")]
 originMeans <- aggregate(Rating ~ Bean_Origin, originRatings, mean)
 originMeansV <- setNames(originMeans$Rating, originMeans$Bean_Origin)
-barplot(originMeansV, las=2, cex.names=0.8)
+barplot(originMeansV, las=2, cex.names=0.5, xlab = "Country", ylab = "Average Rating", main = "Average Chocolate Rating per Country")
 head(originMeans[order(originMeans$Rating), ])
 head(originMeans[order(-originMeans$Rating), ])
 ```
@@ -68,23 +70,22 @@ numIngredientsRatings$Num_Ingredients <- with(numIngredientsRatings, as.numeric(
 numIngredientsRatings <- numIngredientsRatings[,c("Num_Ingredients", "Rating")]
 numMeans <- aggregate(Rating ~ Num_Ingredients, numIngredientsRatings, mean)
 numMeansV <- setNames(numMeans$Rating, numMeans$Num_Ingredients)
-barplot(numMeansV, las=2, cex.names=0.8)
+barplot(numMeansV, las=2, cex.names=0.8, ylim = c(0,3.5), xlab = "Number of Ingredients", ylab = "Average Rating", main = "Average Rating of Chocolates by Number of Ingredients")
 cor(numMeans$Rating, numMeans$Num_Ingredients, method="spearman")
 ```
 
-I decided to analyze the data to see if the number of ingredients has an effect on the rating a chocolate bar receives. The bar plot shows us that chocolate containing 2 or 3 ingredients has the highest average rating, with 3 being the best. More or less ingredients negatively impacts the score. The correlation between the rating and the number of ingredients seems to support this, as the correlation was -0.37 which suggests a moderate correlation between the two variables.
+We decided to analyze the data to see if the number of ingredients has an effect on the rating a chocolate bar receives. The bar plot shows us that chocolate containing 2 or 3 ingredients has the highest average rating, with 3 being the best. Having more or less ingredients negatively impacts the score. The correlation between the rating and the number of ingredients seems to support this, as the correlation was -0.37 which suggests a moderate correlation between the two variables.
 
 ```{r}
-allMean <- mean(choco$Rating)
-vanilly <- choco[c("Ingredients", "Rating")]
-vanillaRatings <- filter(vanilly, grepl("V", Ingredients))
-nonVanillaRatings <- filter(vanilly, !grepl("V", Ingredients))
-vanillaMean <- mean(vanillaRatings$Rating)
-nonVanillaMean <- mean(nonVanillaRatings$Rating)
-vanillaTest <- c(allMean, vanillaMean, nonVanillaMean)
-names(vanillaTest) <- c("All Chocolate", "Chocolate With Vanilla", "Chocolate Without Vanilla")
-vanillaTest
-barplot(vanillaTest, ylim=c(0,3.5))
+library(ggplot2)
+early <- choco[choco$Date == 2006,]
+recent <- choco[choco$Date == 2020,]
+plot(early$Date,early$Rating, xlim = range(2000:2025), xlab = 'Year', ylab = 'Rating', main = 'Year vs. Chocolate Rating')
+points(recent$Date, recent$Rating, col = 'blue', pch = 2)
+legend('topright',c('Early','Recent'), col = c('black','blue'),
+       pch = c(1,2))
+summary(early$Rating)
+summary(recent$Rating)
 ```
 
-I also analyzed the affect of vanilla on the rating of chocolate. I found that the inclusion of vanilla as one of the ingredients of chocolate negatively impacts the taste of the chocolate. The average rating of chocolate with vanilla is 3.03, while the average rating of chocolate without vanilla is 3.21. This means that, on average, adding vanilla drops the rating of chocolate by 0.18.
+We are trying to explore is the ratings of the first chocolates are higher/lower than the most recent. From this comparison, we can see that the ratings are actually very similar. The mean for the 'recent' chocolates is higher than early, but early has the higher max value. The early ratings are more spread out and the median is also lower. The minimum and quartile values for recent is higher than early. From this analysis, we can see that the ratings over time have stayed fairly similar, with a slight increase in more recent chocolates. 
