@@ -7,6 +7,7 @@ output: html_document
 
 ## Scratch Work
 ```{r}
+library(ggplot2)
 choco <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/data/choco.csv") 
 str(choco) 
 ```
@@ -21,15 +22,51 @@ hist(choco$Rating)
 Left-skewed data. 4 outliers on the lower side of the data. Not one 5.0 rating, also not rating between 3-3.33? Distribution is asymmetric and bimodal. 
 
 2. How does the number of ratings depend on the location of the company? Draw a bar chart of the number of reports. 
+count(choco$Location)
+```{r}
+library(ggplot2)
+choco$Location <- as.factor(choco$Location)
+lvl <- levels(choco$Location)
+type1 <- factor(choco$Location, levels = lvl)
+#table(type1)
+counts <- table(type1)
+barplot(counts)
+```
+
+As you can see from this bar chart, the location of the company plays a huge role in the number of ratings received. Not all locations have an evenly distributed number of ratings. As you can see from the graph, USA has the highest number of ratings at 966. This is most likely due to the fact of convenience. Chocolates from a location that are easier to obtain will increase the number of ratings for that location. 
+
+
+3. Do ratings depend on the cacao percentage of a chocolate bar? Create both numerical and graphical summaries, and explain. [Hint: Think about why the scatterplot is not a very good choice for visualization here.]
 
 ```{r}
 library(ggplot2)
-loc <- c(choco$Location, choco$Rating)
-barplot(c)
+cor(choco$Cocoa_Percent,choco$Rating)
+plot(choco$Cocoa_Percent, choco$Rating)
 ```
-3. Do ratings depend on the cacao percentage of a chocolate bar? Create both numerical and graphical summaries, and explain. [Hint: Think about why the scatterplot is not a very good choice for visualization here.]
+
+We can see that these two variables have a negative correlation with each other. This means that when one goes up, the other goes down. We can use this to imply that when cocoa percentage goes up, rating goes down. This correlation coefficient is relatively small though, with a value of only -0.151. This means that these two variables have a weak correlation strength.  
+Using a scatterplot for this problem is not a good choice for visualization here because the values for `rating` repeat themselves for all different percentages of cocoa. The graph shows no linear relationship and the points are straight lines horizontally with each other. 
 
 4. How do different bean origins compare in terms of the flavor of chocolates? Are beans from some places better than the other? Create both numerical and graphical summaries, and explain.
 
+```{r}
+library(ggplot2)
+```
+
 5. Brainstorm two analyses you would like to perform (with your teammates). Describe in plain language what comparisons are you making. Create suitable numerical and graphical summaries for your analyses. Describe the results.
 
+```{r}
+library(ggplot2)
+early <- choco[choco$Date == 2006,]
+recent <- choco[choco$Date == 2020,]
+plot(early$Date,early$Rating, xlim = range(2000:2025), xlab = 'Year', ylab = 'Rating', main = 'Year vs. Chocolate Rating')
+points(recent$Date, recent$Rating, col = 'blue', pch = 2)
+legend('topright',c('Early','Recent'), col = c('black','blue'),
+       pch = c(1,2))
+summary(early$Rating)
+summary(recent$Rating)
+```
+
+I am trying to see if the ratings of the first ever chocolates are higher or lower than the most recent chocolates. Has the ratings of chocolates increased over time?
+
+From this comparison, we can see that the ratings are actually very similar. The mean for the 'recent' chocolates is higher than early, but early has the higher max value. The early ratings are more spread out and the median is also lower. The minimum and quartile values for recent is higher than early. From this analysis, we can see that the ratings over time have stayed fairly similar, with a slight increase in more recent chocolates. 
