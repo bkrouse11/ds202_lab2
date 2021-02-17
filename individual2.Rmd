@@ -51,4 +51,14 @@ cor(cacaoMeans$Rating, cacaoMeans$Cocoa_Percent)
 A scatter plot is not a good choice for visualization because it is difficult to see a pattern or trend on the graph. However, after taking the average score of each cacao percentage and plotting it using a boxplot, we can see that there does not appear to be a direct relationship between the rating of chocolate and its cocao percentage. We can confirm this by seeing the correlation between the two values. Since the correlation value is low, we can determine that the cocoa percentage does not have a large impact on the rating a chocolate bar receives.
 
 4.
+```{r}
+originRatings <- choco[c("Bean_Origin", "Rating")]
+originMeans <- aggregate(Rating ~ Bean_Origin, originRatings, mean)
+originMeansV <- setNames(originMeans$Rating, originMeans$Bean_Origin)
+barplot(originMeansV, las=2, cex.names=0.8)
+originMeans
+head(originMeans[order(originMeans$Rating), ])
+head(originMeans[order(-originMeans$Rating), ])
+```
 
+There doesn't seem to be a lot of variation in the ratings of beans, as seen in the barplot. Many of the counries from which the highest and lowest rated beans were in the Caribbean and near Africa. However, two countries that produce some of the highest rated beans, Thailand and the Solomon Islands, break this trend since they are located in Asia and Oceania.
