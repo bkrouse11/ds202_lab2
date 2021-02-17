@@ -34,6 +34,8 @@ As you can see from the histogram, most of the chocolate bars have a rating betw
 
 2. 
 ```{r}
+locationDF <- count(choco, Location)
+locationCount <- setNames(as.integer(locationDF$n), substr(locationDF$Location, 1, 13))
 barplot(locationCount, las=2, cex.names=0.8, ylim=c(0,1000))
 barplot(locationCount, las=2, cex.names=0.3, ylim=c(0,1000))
 ```
