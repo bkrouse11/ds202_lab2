@@ -9,22 +9,46 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Searching for the Best Chocolates
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r, include=FALSE}
+library(dplyr)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+choco <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/data/choco.csv")
 
-```{r cars}
-summary(cars)
+ratings <- choco$Rating
+companies <- choco$Company
+locationDF <- count(choco, Location)
+locationCount <- setNames(as.integer(locationDF$n), substr(locationDF$Location, 1, 13))
+cacaoRatings <- choco[c("Cocoa_Percent", "Rating")]
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+1.
+```{r}
+hist(ratings)
+boxplot(ratings)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+As you can see from the histogram, most of the chocolate bars have a rating between 2.75 and 3.75. From the boxplot shows that the median rating is around 3.25. There are a few outliers with low ratings on the boxplot. The histogram tells us that there are around 50 chocolate bars with ratings of 2 or less.
+
+2. 
+```{r}
+barplot(locationCount, las=2, cex.names=0.8, ylim=c(0,1000))
+barplot(locationCount, las=2, cex.names=0.3, ylim=c(0,1000))
+```
+
+A large majority of the ratings were made for companies located in the United States. This is likely due to the fact that there are a lot of chocolate companies based in the U.S. The next closest countries are France and Canada. The rest of the countries have very few ratings, likely because they have much fewer chocolate companies.
+
+3. 
+```{r}
+plot(cacaoRatings)
+cacaoMeans <- aggregate(Rating ~ Cocoa_Percent, cacaoRatings, mean)
+cacaoMeansV <- setNames(cacaoMeans$Rating, cacaoMeans$Cocoa_Percent)
+barplot(cacaoMeansV, las=2)
+cor(cacaoMeans$Rating, cacaoMeans$Cocoa_Percent)
+```
+
+A scatter plot is not a good choice for visualization because it is difficult to see a pattern or trend on the graph. However, after taking the average score of each cacao percentage and plotting it using a boxplot, we can see that there does not appear to be a direct relationship between the rating of chocolate and its cocao percentage. We can confirm this by seeing the correlation between the two values. Since the correlation value is low, we can determine that the cocoa percentage does not have a large impact on the rating a chocolate bar receives.
+
+4.
+
